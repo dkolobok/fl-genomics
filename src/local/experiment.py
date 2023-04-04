@@ -1,3 +1,4 @@
+import pickle
 from abc import abstractmethod
 import sys
 from typing import Type
@@ -221,8 +222,9 @@ class NNExperiment(LocalExperiment):
         mlflow.log_params({'optimizer': self.cfg.optimizer})
         mlflow.log_params({'scheduler': self.cfg.get('scheduler', None)})
         
-        prevalence = self.y.sum().mean()
-        mlflow.log_metric('prevalence', float(prevalence))
+        # object has no attribute 'sum'. Probably because it is supposed to be a tuple of train, val, test
+        # prevalence = self.y.sum().mean()
+        # mlflow.log_metric('prevalence', float(prevalence))
         
         self.create_model()
 
@@ -246,6 +248,11 @@ class NNExperiment(LocalExperiment):
         self.trainer.fit(self.model, self.data_module)
         print("Fitted")
         self.load_best_model()
+        mlflow.log_param('model_saved', self.trainer.checkpoint_callback.best_model_path)
+        f = open(self.trainer.checkpoint_callback.best_model_path.replace('.ckpt', '.pkl'), 'wb')
+        pickle.dump(self.model, f)
+        f.close()
+
         print(f'Loaded best model {self.trainer.checkpoint_callback.best_model_path}')
 
     def eval_and_log(self, metric_fun=r2_score, metric_name='r2'):

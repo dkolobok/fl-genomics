@@ -1,6 +1,5 @@
 # Federated Biobank Project
-
-## Motivation
+A copy of repository https://github.com/genxnetwork/fl-genomics, which explores federated learning for phenotype-from-genotype and ancestry-from-genotype prediction. See the paper at https://www.medrxiv.org/content/10.1101/2023.01.24.23284898v2
 
 ## TG Environment Installation
 
